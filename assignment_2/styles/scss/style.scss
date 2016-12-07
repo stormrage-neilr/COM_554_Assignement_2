@@ -1,0 +1,17 @@
+$menu-icon-color:#9d9d9d;
+
+#navbar-toggle-button{
+  border-color: grey;
+}
+
+.glyphicon{
+  color: $menu-icon-color;
+}
+
+img {
+  max-width: 100%;
+}
+
+.panel{
+  overflow: hidden;
+}
