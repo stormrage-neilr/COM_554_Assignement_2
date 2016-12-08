@@ -9,7 +9,7 @@ $(document).ready(function (){
         $(this).toggleClass('active');
 
         $('.feed').hide();
-        $('#' + $(this).find('a')[0].innerHTML.toLowerCase() + '-feed').show()
+        $(('#' + $(this).find('a')[0].innerHTML.toLowerCase() + '-feed').replace(/\s+/g, '-')).show()
     })
 
     $('.navbar-brand').click(function(){

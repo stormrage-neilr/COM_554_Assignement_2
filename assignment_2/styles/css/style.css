@@ -8,6 +8,17 @@ img {
   max-width: 100%; }
 
 .panel {
-  overflow: hidden; }
+  overflow: hidden;
+  cursor: pointer; }
+  .panel img {
+    cursor: pointer; }
+  .panel div {
+    cursor: pointer; }
+
+#modal-description {
+  font-size: larger; }
+
+h3 {
+  margin: auto; }
 
 /*# sourceMappingURL=style.css.map */

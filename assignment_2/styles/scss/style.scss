@@ -14,4 +14,19 @@ img {
 
 .panel{
   overflow: hidden;
+  cursor: pointer;
+  img{
+    cursor: pointer;
+  }
+  div{
+    cursor: pointer;
+  }
+}
+
+#modal-description{
+  font-size: larger;
+}
+
+h3{
+  margin: auto;
 }
