@@ -1,7 +1,4 @@
 $(document).ready(function (){
-    //Initial setup
-    $('.feed').hide();
-    $('#home-feed').show();
 
     $('.nav.navbar-nav li').click(function(){
 

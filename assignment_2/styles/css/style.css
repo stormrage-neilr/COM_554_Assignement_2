@@ -18,7 +18,13 @@ img {
 #modal-description {
   font-size: larger; }
 
-h3 {
-  margin: auto; }
+h2 {
+  text-align: center; }
+
+section {
+  display: none; }
+
+#home-feed {
+  display: block; }
 
 /*# sourceMappingURL=style.css.map */
