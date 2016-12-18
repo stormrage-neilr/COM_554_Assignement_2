@@ -15,6 +15,7 @@ img {
 .panel{
   overflow: hidden;
   cursor: pointer;
+  min-height: 377px;
   img{
     cursor: pointer;
   }
@@ -29,12 +30,4 @@ img {
 
 h2{
   text-align: center;
-}
-
-section{
-  display: none;
-}
-
-#home-feed{
-  display: block;
 }

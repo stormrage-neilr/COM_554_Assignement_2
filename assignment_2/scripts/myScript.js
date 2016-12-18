@@ -9,7 +9,7 @@ $(document).ready(function()
 
     // Send ajax request for each rss feed and on success populate relevant section.
     updateDatabaseFromBBCFeed('');// The home section is done first for a better user experience.
-    // updatePanelsFromDatabase('home');
+    updatePanelsFromDatabase('home');
 
     updateDatabaseFromBBCFeed('entertainment_and_arts/');
     updateDatabaseFromBBCFeed('politics/');
@@ -32,21 +32,19 @@ $(document).ready(function()
         });
     }
 
-
-    // function updatePanelsFromDatabase(feedName){
-    //     $.ajax({
-    //         type: "GET",
-    //         url: "php/db/get-by-type.php",
-    //         data: {feedName: feedName},
-    //         dataType: "xml",
-    //         cache: false,
-    //         success: updatePanels,
-    //         error: function (xhr, ajaxOptions, thrownError) {
-    //             console.log(xhr.status);
-    //             console.log(thrownError);
-    //         }
-    //     });
-    // }
+    function updatePanelsFromDatabase(feedName){
+        $.ajax({
+            type: "GET",
+            url: "php/db/get-by-type.php",
+            data: {feedName: feedName},
+            cache: false,
+            success: updatePanels,
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
 
     // This method takes an item from the feed and constructs a node for xml object.
     function saveToDatabase(feedItem, channelTitle){
@@ -61,16 +59,13 @@ $(document).ready(function()
                 pubDate: feedItem.find("pubDate").text().split("'").join("\\'"),
                 chan: channelTitle
             },
-            success: doThing,
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr.status);
                 console.log(thrownError);
             }
         });
     }
-    function doThing(string){
-        console.log(string);
-    }
+
     // Takes the ajax news feed result, passes it into the xml object and the updates the website to show the information.
     function updateDatabase(feed){
         var channelTitle = $(feed).find("channel").eq(0).find("title").eq(0).text();
@@ -89,45 +84,40 @@ $(document).ready(function()
     }
 
     // Updates the sections with the relative feed items.
-    function updatePanels(result) {
-        console.log(result);
+    function updatePanels(xmlDoc) {
+        var items = $(xmlDoc).find('Item');
+        $('#news-feed').append('<div class="panel-group">');
+        // Looping through feed items and adding them to the html.
+        for (var i = 0; i < items.length; i++) {
+            var title = items[i].getElementsByTagName('Title')[0].innerHTML;
+            var description = items[i].getElementsByTagName('Description')[0].innerHTML;
+            var imageSrc = items[i].getElementsByTagName('Image_Source')[0].innerHTML;
+            var link = items[i].getElementsByTagName('Link')[0].innerHTML;
+            var image;
+            if (imageSrc === "undefined") {
+                image = '';
+            } else {
+                image = '<img id="news-image"src="' + imageSrc + '" alt="" class="img"/>';
+            }
 
-        // var feedId = '#' + newsType + '-feed';
-        // var items = xmlDoc.getElementsByTagName('Item');
-        // $(feedId).append('<div class="panel-group">');
-        // // Looping through feed items and adding them to the html.
-        // for (var i = 0; i < items.length; i++) {
-        //     if(newsType === getFeedName(items[i].getElementsByTagName('Channel')[0].innerHTML)) {
-        //         var title = items[i].getElementsByTagName('Title')[0].innerHTML;
-        //         var description = items[i].getElementsByTagName('Description')[0].innerHTML;
-        //         var imageSrc = items[i].getElementsByTagName('Image_Source')[0].innerHTML;
-        //         var link = items[i].getElementsByTagName('Link')[0].innerHTML;
-        //         var image;
-        //         if (imageSrc === "undefined") {
-        //             image = '';
-        //         } else {
-        //             image = '<img id="news-image"src="' + imageSrc + '" alt="" class="img"/>';
-        //         }
-        //
-        //         $(feedId).append('<div class="col-sm-6 col-md-3 col-lg-2 ">' +
-        //             '<div class="panel panel-default ' + newsType + '" value="' + link + '">' +
-        //             '<div class="panel-heading">' + title + '</div>' +
-        //             image +
-        //             '<div class="panel-body">' + description + '</div>' +
-        //             '</div></div></div>');
-        //     }
-        // }
-        // $(feedId).append('<div class="panel-group">');
-        // // Matching panel heights.
-        // $('.'+newsType).matchHeight(false);
-        // // Adding event to toggle modal, count views and update the most popular section.
-        // $('.'+newsType).click(function(){
-        //     itemIndex = getIndexFromLink($(this).attr('value')); // Getting index of the selected item in the xml object.
-        //     xmlDoc.getElementsByTagName("Item")[itemIndex].getElementsByTagName('Views')[0].innerHTML++; // Incrementing number of views.
-        //     populateModal(itemIndex);
-        //     $('.modal').modal('toggle');
-        //     updateMostPopularSection();
-        // });
+            $('#news-feed').append('<div class="col-sm-6 col-md-3 col-lg-2 ">' +
+                '<div class="panel panel-default " value="' + link + '">' +
+                '<div class="panel-heading">' + title + '</div>' +
+                image +
+                '<div class="panel-body">' + description + '</div>' +
+                '</div></div></div>');
+        }
+        $('#news-feed').append('</div');
+        // Matching panel heights.
+        $('.panel').matchHeight(false);
+        // Adding event to toggle modal, count views and update the most popular section.
+        $('.panel').click(function(){
+            itemIndex = getIndexFromLink($(this).attr('value')); // Getting index of the selected item in the xml object.
+            xmlDoc.getElementsByTagName("Item")[itemIndex].getElementsByTagName('Views')[0].innerHTML++; // Incrementing number of views.
+            populateModal(itemIndex);
+            $('.modal').modal('toggle');
+            updateMostPopularSection();
+        });
     }
 
     // Updating the most popular section with viewed items.
@@ -159,7 +149,7 @@ $(document).ready(function()
         }
         $('#most-popular-feed').append('<div class="panel-group">');
         // Matching panel heights.
-        $('#most-popular-feed .panel').matchHeight(false);
+        // $('#most-popular-feed .panel').matchHeight(false);
         // Adding event to toggle modal, count views and update the most popular section.
         $('#most-popular-feed .panel').click(function(){
             itemIndex = getIndexFromLink($(this).attr('value'));
@@ -187,16 +177,6 @@ $(document).ready(function()
         $('#modal-picture').attr('src', imageSrc)
     }
 
-    // This method generates the feed name from the chanel name (e.g. 'BBC News - Home' -> 'home')
-    function getFeedName(channel) {
-        var words = channel.substring(11).split(" ");
-        if (words.length == 2) {
-            return words[1].toLowerCase();
-        } else {
-            return words[0].toLowerCase();
-        }
-    }
-
     /*
         Navigation bar functionality.
      */
@@ -207,8 +187,7 @@ $(document).ready(function()
         $('.nav.navbar-nav li').removeClass('active');
         $(this).toggleClass('active');
         // displaying the relative feed.
-        $('.feed').hide();
-        $(('#' + $(this).find('a')[0].innerHTML.toLowerCase() + '-feed').replace(/\s+/g, '-')).show()
+        // $(('#' + $(this).find('a')[0].innerHTML.toLowerCase() + '-feed').replace(/\s+/g, '-')).show()
     });
 
     // Adding functionallity to the brand link in the nav bar.
@@ -217,17 +196,13 @@ $(document).ready(function()
         $('.nav.navbar-nav li').removeClass('active');
         $('.nav.navbar-nav li').first().addClass('active');
         // Displaying the home section
-        $('.feed').hide();
-        $('#home-feed').show();
     });
 
     // Adding search functionality to trigger on input change in the search bar.
     $('#search-box').bind('input', function() {
         // Showing the search section.
-        $('.feed').hide();
         $('.nav.navbar-nav li').removeClass('active');
-        $('#search-feed').empty();
-        $('#search-feed').show();
+        $('#news-feed').empty();
         // Retrieving the input from the search box.
         var inputText = $(this).val();
         // Retrieving all news items.
@@ -287,7 +262,6 @@ $(document).ready(function()
 
         // Adding modal functionallity to panel click.
         $('#search-feed').append('<div class="panel-group">');
-        $('#search-feed .panel').matchHeight(false); // Matching height of panels.
         // Adding event to toggle modal, count views and update the most popular section.
         $('#search-feed .panel').click(function(){
             itemIndex = getIndexFromLink($(this).attr('value'));
@@ -296,5 +270,6 @@ $(document).ready(function()
             $('.modal').modal('toggle');
             updateMostPopularSection();
         });
+        // $('#search-feed .panel').matchHeight(false); // Matching height of panels.
     });
 });
