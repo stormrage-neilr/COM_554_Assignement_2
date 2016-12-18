@@ -17,11 +17,11 @@ create table News_Items(
 drop PROCEDURE if exists sp1_insert;
 delimiter //
 CREATE PROCEDURE sp1_insert(
-  IN inputLink varchar(256) ,
-  IN inputTitle varchar(256) ,
-  IN inputImageSource varchar(256) ,
-  IN inputDescription text ,
-  IN inputChannel text ,
+  IN inputLink varchar(256),
+  IN inputTitle varchar(256),
+  IN inputImageSource varchar(256),
+  IN inputDescription text,
+  IN inputChannel text,
   IN inputPublishDate varchar(32))
 BEGIN
   if ((SELECT count(*) FROM News_Items WHERE News_Items.Link = inputLink) = 0) THEN
@@ -39,5 +39,14 @@ CREATE PROCEDURE sp2_getNewsByType(
   IN inputType varchar(32))
 BEGIN
   SELECT * FROM News_Items WHERE News_Items.Channels like CONCAT("%", inputType, "%");
+END ;//
+delimiter ;
+
+drop PROCEDURE if exists sp3_getNewsByLink;
+delimiter //
+CREATE PROCEDURE sp3_getNewsByLink(
+  IN inputLink varchar(256))
+BEGIN
+  SELECT * FROM News_Items WHERE News_Items.Link = inputLink;
 END ;//
 delimiter ;
