@@ -6,65 +6,77 @@ $(document).ready(function()
     /*
         Getting News information and using it to populate the site.
      */
-    var xmlStr = "<News></News>";
-    var parser = new DOMParser();
-    var xmlDoc = parser.parseFromString(xmlStr, "text/xml");//Creating xml object to hold ajax results.
 
-    // Send ajax request for each rss feed and on sucess populate relevant section.
-    requestFeed('news');// The home section is done first for a better user experience.
-    requestFeed('entertainment');
-    requestFeed('politics');
-    requestFeed('science');
-    requestFeed('technology');
-    requestFeed('world');
+    // Send ajax request for each rss feed and on success populate relevant section.
+    updateDatabaseFromBBCFeed('');// The home section is done first for a better user experience.
+    // updatePanelsFromDatabase('home');
 
-    function requestFeed(feedName){
+    // requestFeed('entertainment_and_arts/');
+    // requestFeed('politics/');
+    // requestFeed('science_and_environment/');
+    // requestFeed('technology/');
+    // requestFeed('world/');
+
+    function updateDatabaseFromBBCFeed(feedName){
         $.ajax({
             type: "GET",
-            url: "feeds/rss_proxy_bbc_" + feedName + ".php",
+            url: "php/rss_bbc_feed.php",
+            data: {feedName: feedName},
             dataType: "xml",
             cache: false,
-            success: updateXmlDoc
+            success: updateDatabase,
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
         });
     }
 
+
+    // function updatePanelsFromDatabase(feedName){
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "php/db/get-by-type.php",
+    //         data: {feedName: feedName},
+    //         dataType: "xml",
+    //         cache: false,
+    //         success: updatePanels,
+    //         error: function (xhr, ajaxOptions, thrownError) {
+    //             console.log(xhr.status);
+    //             console.log(thrownError);
+    //         }
+    //     });
+    // }
+
     // This method takes an item from the feed and constructs a node for xml object.
-    function createItem(feedItem, channelTitle){
-        var item = xmlDoc.createElement("Item");
-        var title = xmlDoc.createElement("Title");
-        var imgSrc = xmlDoc.createElement("Image_Source");
-        var desc = xmlDoc.createElement("Description");
-        var channel = xmlDoc.createElement("Channel");
-        var link = xmlDoc.createElement("Link");
-        var pubDate = xmlDoc.createElement("Publish_Date");
-        var views = xmlDoc.createElement("Views");
-
-        title.append(feedItem.find("title").text());
-        imgSrc.append(feedItem.find('thumbnail').attr('url'));
-        desc.append(feedItem.find("description").text());
-        channel.append(channelTitle);
-        link.append(feedItem.find("link").text());
-        pubDate.append(feedItem.find("pubDate").text());
-        views.append("0");
-
-        item.appendChild(title);
-        item.appendChild(imgSrc);
-        item.appendChild(desc);
-        item.append(channel);
-        item.appendChild(link);
-        item.appendChild(pubDate);
-        item.appendChild(views);
-
-        return item;
+    function saveToDatabase(feedItem, channelTitle){
+        $.ajax({
+            type: "POST",
+            url: "php/db/insert.php",
+            data: {
+                title: feedItem.find("title").text().split("'").join("\\'"),
+                imgSrc: feedItem.find('thumbnail').attr('url').split("'").join("\\'"),
+                desc: feedItem.find("description").text().split("'").join("\\'"),
+                link: feedItem.find("link").text().split("'").join("\\'"),
+                pubDate: feedItem.find("pubDate").text().split("'").join("\\'"),
+                chan: channelTitle
+            },
+            success: doThing,
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
     }
-
+    function doThing(string){
+        console.log(string);
+    }
     // Takes the ajax news feed result, passes it into the xml object and the updates the website to show the information.
-    function updateXmlDoc(feed){
+    function updateDatabase(feed){
         var channelTitle = $(feed).find("channel").eq(0).find("title").eq(0).text();
         for (var i = 0; i < $(feed).find("item").length ; i++) {
-            xmlDoc.getElementsByTagName("News")[0].appendChild(createItem($(feed).find("item").eq(i), channelTitle));
+            saveToDatabase($(feed).find("item").eq(i), channelTitle);
         }
-        updateFeed(getFeedName(feed.getElementsByTagName('description')[0].textContent), xmlDoc);
     }
 
     // This returns the index of a news item within the xml object given its link.
@@ -77,43 +89,45 @@ $(document).ready(function()
     }
 
     // Updates the sections with the relative feed items.
-    function updateFeed(feedName) {
-        var feedId = '#' + feedName + '-feed';
-        var items = xmlDoc.getElementsByTagName('Item');
-        $(feedId).append('<div class="panel-group">');
-        // Looping through feed items and adding them to the html.
-        for (var i = 0; i < items.length; i++) {
-            if(feedName === getFeedName(items[i].getElementsByTagName('Channel')[0].innerHTML)) {
-                var title = items[i].getElementsByTagName('Title')[0].innerHTML;
-                var description = items[i].getElementsByTagName('Description')[0].innerHTML;
-                var imageSrc = items[i].getElementsByTagName('Image_Source')[0].innerHTML;
-                var link = items[i].getElementsByTagName('Link')[0].innerHTML;
-                var image;
-                if (imageSrc === "undefined") {
-                    image = '';
-                } else {
-                    image = '<img id="news-image"src="' + imageSrc + '" alt="" class="img"/>';
-                }
+    function updatePanels(result) {
+        console.log(result);
 
-                $(feedId).append('<div class="col-sm-6 col-md-3 col-lg-2 ">' +
-                    '<div class="panel panel-default ' + feedName + '" value="' + link + '">' +
-                    '<div class="panel-heading">' + title + '</div>' +
-                    image +
-                    '<div class="panel-body">' + description + '</div>' +
-                    '</div></div></div>');
-            }
-        }
-        $(feedId).append('<div class="panel-group">');
-        // Matching panel heights.
-        $('.'+feedName).matchHeight(false);
-        // Adding event to toggle modal, count views and update the most popular section.
-        $('.'+feedName).click(function(){
-            itemIndex = getIndexFromLink($(this).attr('value')); // Getting index of the selected item in the xml object.
-            xmlDoc.getElementsByTagName("Item")[itemIndex].getElementsByTagName('Views')[0].innerHTML++; // Incrementing number of views.
-            populateModal(itemIndex);
-            $('.modal').modal('toggle');
-            updateMostPopularSection();
-        });
+        // var feedId = '#' + newsType + '-feed';
+        // var items = xmlDoc.getElementsByTagName('Item');
+        // $(feedId).append('<div class="panel-group">');
+        // // Looping through feed items and adding them to the html.
+        // for (var i = 0; i < items.length; i++) {
+        //     if(newsType === getFeedName(items[i].getElementsByTagName('Channel')[0].innerHTML)) {
+        //         var title = items[i].getElementsByTagName('Title')[0].innerHTML;
+        //         var description = items[i].getElementsByTagName('Description')[0].innerHTML;
+        //         var imageSrc = items[i].getElementsByTagName('Image_Source')[0].innerHTML;
+        //         var link = items[i].getElementsByTagName('Link')[0].innerHTML;
+        //         var image;
+        //         if (imageSrc === "undefined") {
+        //             image = '';
+        //         } else {
+        //             image = '<img id="news-image"src="' + imageSrc + '" alt="" class="img"/>';
+        //         }
+        //
+        //         $(feedId).append('<div class="col-sm-6 col-md-3 col-lg-2 ">' +
+        //             '<div class="panel panel-default ' + newsType + '" value="' + link + '">' +
+        //             '<div class="panel-heading">' + title + '</div>' +
+        //             image +
+        //             '<div class="panel-body">' + description + '</div>' +
+        //             '</div></div></div>');
+        //     }
+        // }
+        // $(feedId).append('<div class="panel-group">');
+        // // Matching panel heights.
+        // $('.'+newsType).matchHeight(false);
+        // // Adding event to toggle modal, count views and update the most popular section.
+        // $('.'+newsType).click(function(){
+        //     itemIndex = getIndexFromLink($(this).attr('value')); // Getting index of the selected item in the xml object.
+        //     xmlDoc.getElementsByTagName("Item")[itemIndex].getElementsByTagName('Views')[0].innerHTML++; // Incrementing number of views.
+        //     populateModal(itemIndex);
+        //     $('.modal').modal('toggle');
+        //     updateMostPopularSection();
+        // });
     }
 
     // Updating the most popular section with viewed items.
