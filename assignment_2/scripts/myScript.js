@@ -11,11 +11,11 @@ $(document).ready(function()
     updateDatabaseFromBBCFeed('');// The home section is done first for a better user experience.
     // updatePanelsFromDatabase('home');
 
-    // requestFeed('entertainment_and_arts/');
-    // requestFeed('politics/');
-    // requestFeed('science_and_environment/');
-    // requestFeed('technology/');
-    // requestFeed('world/');
+    updateDatabaseFromBBCFeed('entertainment_and_arts/');
+    updateDatabaseFromBBCFeed('politics/');
+    updateDatabaseFromBBCFeed('science_and_environment/');
+    updateDatabaseFromBBCFeed('technology/');
+    updateDatabaseFromBBCFeed('world/');
 
     function updateDatabaseFromBBCFeed(feedName){
         $.ajax({

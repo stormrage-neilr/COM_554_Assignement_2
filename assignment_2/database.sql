@@ -21,11 +21,14 @@ CREATE PROCEDURE sp1_insert(
   IN inputTitle varchar(256) ,
   IN inputImageSource varchar(256) ,
   IN inputDescription text ,
-  IN inputChannels text ,
+  IN inputChannel text ,
   IN inputPublishDate varchar(32))
 BEGIN
-INSERT INTO News_Items(Link, Title, Image_Source, Description, Channels, Publish_Date, Views)
-(SELECT inputLink, inputTitle, inputImageSource, inputDescription, inputChannels, inputPublishDate, 0
-WHERE (SELECT COUNT(*) FROM News_Items WHERE News_Items.Link = inputLink) = 0);
+if ((SELECT count(*) FROM News_Items WHERE News_Items.Link = inputLink) = 0) THEN
+  INSERT INTO News_Items(Link, Title, Image_Source, Description, Channels, Publish_Date, Views)
+  (SELECT inputLink, inputTitle, inputImageSource, inputDescription, inputChannel, inputPublishDate, 0);
+ELSEIF ((SELECT count(*) FROM News_Items WHERE News_Items.Channels like CONCAT("%", inputChannel, "%") AND News_Items.Link = inputLink) = 0) THEN
+  UPDATE News_Items SET News_Items.Channels = CONCAT(News_Items.Channels, ", ", inputChannel) WHERE News_Items.Link = inputLink;
+END if;
 END ;//
 delimiter ;
