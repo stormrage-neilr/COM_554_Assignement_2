@@ -47,6 +47,16 @@ delimiter //
 CREATE PROCEDURE sp3_getNewsByLink(
   IN inputLink varchar(256))
 BEGIN
+  UPDATE News_Items SET News_Items.Views = News_Items.Views + 1 WHERE News_Items.Link = inputLink;
   SELECT * FROM News_Items WHERE News_Items.Link = inputLink;
+END ;//
+delimiter ;
+
+drop PROCEDURE if exists sp4_getNewsByViews;
+delimiter //
+CREATE PROCEDURE sp4_getNewsByViews()
+BEGIN
+  SELECT * FROM News_Items WHERE News_Items.Views > 0
+  ORDER BY News_Items.Views DESC;
 END ;//
 delimiter ;

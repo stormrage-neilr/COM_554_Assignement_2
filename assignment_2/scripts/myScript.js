@@ -3,13 +3,47 @@
  */
 $(document).ready(function()
 {
-    updatePanelsFromDatabase('home');
+    updatePanelsForFeed('home');
 
     $('li').click(function () {
-        updatePanelsFromDatabase($(this).get(0).getElementsByTagName('a')[0].innerText);
+        var buttonText = $(this).get(0).getElementsByTagName('a')[0].innerText;
+        if (buttonText === 'Most Popular'){
+            updatePanelsFromViews();
+        }else {
+            updatePanelsForFeed($(this).get(0).getElementsByTagName('a')[0].innerText);
+        }
+        $('li').removeClass('active');
+        $(this).addClass('active');
     });
 
-    function updatePanelsFromDatabase(feedName){
+    function updatePanelsFromViews(){
+        $.ajax({
+            type: "GET",
+            url: "php/db/get-by-views.php",
+            cache: false,
+            success: updatePanels,
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    function updatePanelsFromSearch(search){
+        $.ajax({
+            type: "GET",
+            url: "php/db/get-by-search.php",
+            data: {search: search},
+            cache: false,
+            success: updatePanels,
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+
+    function updatePanelsForFeed(feedName){
         $.ajax({
             type: "GET",
             url: "php/db/get-by-type.php",
@@ -50,10 +84,10 @@ $(document).ready(function()
         $('.panel').matchHeight(false);
         // Adding event to toggle modal, count views and update the most popular section.
         $('.panel').click(function(){
+            emptyModal();
             populateModal($(this).attr('value'));
             $('.modal').modal('toggle');
             // updateMostPopularSection();
-
         });
     }
 
@@ -88,6 +122,14 @@ $(document).ready(function()
         $('#modal-picture').attr('src', imageSrc)
     }
 
+    function emptyModal(){
+        $('#modal-title').html('');
+        $('#modal-description').html('');
+        $('#modal-views').html(' ');
+        $('#modal-pubDate').html(' ');
+        $('#modal-channel').html(' ');
+        $('#modal-picture').attr('src', '')
+    }
 
 
 
