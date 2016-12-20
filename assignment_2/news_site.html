@@ -31,13 +31,12 @@
                 </ul>
                 <form class="navbar-form navbar-right">
                     <div class="form-group">
-                        <input id="search-box" type="text" class="form-control" placeholder="Search">
+                        <input id="search-box" type="text" class="form-control" placeholder="Search" data-toggle="tooltip" data-placement="left" data-original-title="Type your search text here! The search will be run on every key typed.">
                     </div>
                 </form>
             </div>
         </div>
     </nav>
-
     <!-- Modal -->
     <div class="container">
         <div class="modal" id="modal">
@@ -50,10 +49,11 @@
                     <div class="modal-body">
                         <img id="modal-picture" src=""></img>
                         <p> </p>
-                        <p id="modal-description"></p>
-                        <label>Views:</label><span id="modal-views"></span><br>
+                        <label>Published:</label><span id="modal-pubDate"></span><br>
                         <label>Channel:</label><span id="modal-channel"></span><br>
-                        <label>Published:</label><span id="modal-pubDate"></span>
+                        <label>Views:</label><span id="modal-views"></span><br><br>
+                        <div id="modal-description"></div>
+                        <a id="modal-link" href="">Go to this article on the BBC Website.</a>
                     </div>
                 </div>
             </div>

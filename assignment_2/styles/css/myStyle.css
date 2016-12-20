@@ -9,8 +9,7 @@ img {
 
 .panel {
   overflow: hidden;
-  cursor: pointer;
-  min-height: 377px; }
+  cursor: pointer; }
   .panel img {
     cursor: pointer; }
   .panel div {
@@ -21,5 +20,8 @@ img {
 
 h2 {
   text-align: center; }
+
+.story-body__introduction, .sp-story-body__introduction {
+  font-weight: bold; }
 
 /*# sourceMappingURL=myStyle.css.map */

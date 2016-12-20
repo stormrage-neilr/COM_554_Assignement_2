@@ -15,7 +15,6 @@ img {
 .panel{
   overflow: hidden;
   cursor: pointer;
-  min-height: 377px;
   img{
     cursor: pointer;
   }
@@ -30,4 +29,8 @@ img {
 
 h2{
   text-align: center;
+}
+
+.story-body__introduction, .sp-story-body__introduction{
+  font-weight: bold;
 }

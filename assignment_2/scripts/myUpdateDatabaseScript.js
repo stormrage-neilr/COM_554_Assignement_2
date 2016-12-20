@@ -29,7 +29,7 @@ function saveToDatabase(feedItem, channelTitle){
             imgSrc: feedItem.find('thumbnail').attr('url').split("'").join("\\'"),
             desc: feedItem.find("description").text().split("'").join("\\'"),
             link: feedItem.find("link").text().split("'").join("\\'"),
-            pubDate: feedItem.find("pubDate").text().split("'").join("\\'"),
+            pubDate: getFormatedDateString(feedItem.find("pubDate").text()).split("'").join("\\'"),
             chan: channelTitle
         },
         error: function (xhr, ajaxOptions, thrownError) {
@@ -37,6 +37,11 @@ function saveToDatabase(feedItem, channelTitle){
             console.log(thrownError);
         }
     });
+}
+
+function getFormatedDateString(tokens) {
+    var tokens = tokens.split(' ');
+    return tokens[1]+'-'+(new Date(Date.parse(tokens[2] +" 1, 2000")).getMonth()+1)+'-'+tokens[3]+' '+tokens[4];
 }
 
 // Takes the ajax news feed result and passes each article into the database.

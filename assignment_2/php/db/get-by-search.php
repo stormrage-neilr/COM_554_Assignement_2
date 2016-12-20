@@ -1,7 +1,7 @@
 <?php
     require_once('db-connector.php');
 
-    $sql_result = mysqli_query($conn, 'call sp4_getNewsByViews()');
+    $sql_result = mysqli_query($conn, 'call sp5_getNewsBySearch(\'' . $_GET['search'] .'\')');
 
     $xml_result_string = '<News>';
     while($row = mysqli_fetch_assoc($sql_result)) {

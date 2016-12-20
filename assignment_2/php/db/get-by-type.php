@@ -1,5 +1,5 @@
 <?php
-    require_once('../../../../db-connector.php');
+    require_once('db-connector.php');
 
     $sql_result = mysqli_query($conn, 'call sp2_getNewsByType(\'' . $_GET['feedName'] .'\')');
 

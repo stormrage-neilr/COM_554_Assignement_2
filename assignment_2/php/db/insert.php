@@ -1,5 +1,5 @@
 <?php
-    require_once('../../../../db-connector.php');
+    require_once('db-connector.php');
 
     $query =
         "call sp1_insert('" . $_POST['link'] . "', '" .
@@ -13,3 +13,4 @@
 
     mysqli_close($conn);
 ?>
+
