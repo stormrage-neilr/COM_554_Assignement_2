@@ -15,12 +15,28 @@ img {
 .panel{
   overflow: hidden;
   cursor: pointer;
-  img{
+  .panel-heading{
+    label{
+      cursor: pointer;
+    }
     cursor: pointer;
   }
-  div{
+  .news-image{
     cursor: pointer;
   }
+  .panel-body{
+    label{
+      cursor: pointer;
+    }
+    cursor: pointer;
+  }
+}
+#navbar-brand{
+  color: $menu-icon-color;
+}
+
+.news-title{
+  font-weight: bolder;
 }
 
 #modal-description{

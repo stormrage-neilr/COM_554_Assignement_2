@@ -10,10 +10,22 @@ img {
 .panel {
   overflow: hidden;
   cursor: pointer; }
-  .panel img {
+  .panel .panel-heading {
     cursor: pointer; }
-  .panel div {
+    .panel .panel-heading label {
+      cursor: pointer; }
+  .panel .news-image {
     cursor: pointer; }
+  .panel .panel-body {
+    cursor: pointer; }
+    .panel .panel-body label {
+      cursor: pointer; }
+
+#navbar-brand {
+  color: #9d9d9d; }
+
+.news-title {
+  font-weight: bolder; }
 
 #modal-description {
   font-size: larger; }

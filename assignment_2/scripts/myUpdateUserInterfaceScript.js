@@ -3,20 +3,41 @@
  */
 $(document).ready(function()
 {
-    updatePanelsForFeed('home');
+    populateFromUrl();
 
     $('[data-toggle="tooltip"]').tooltip();
 
+    $('#modal').on('hidden.bs.modal', function () {
+        history.pushState(null, null, "news_site.html?" + location.hash.split("+modal=")[0]);
+    });
+
     $('li').click(function () {
         var buttonText = $(this).get(0).getElementsByTagName('a')[0].innerText;
-        if (buttonText === 'Most Popular'){
-            updatePanelsFromViews();
-        }else {
-            updatePanelsForFeed($(this).get(0).getElementsByTagName('a')[0].innerText);
-        }
-        $('li').removeClass('active');
-        $(this).addClass('active');
+        history.pushState(null, null, "news_site.html?#" + buttonText.toLocaleLowerCase());
+        updateFeed(buttonText);
     });
+
+    function updateFeed(feed){
+        if (feed.toLowerCase() === 'most popular'){
+            updatePanelsFromViews();
+            $('#search-box').val('');
+        }else if (feed.indexOf('search') === 0){
+            var searchValue = feed.split('search=')[1].split('+modal=')[0];
+            $('#search-box').val(searchValue);
+            updatePanelsFromSearch(searchValue);
+        }
+        else {
+            updatePanelsForFeed(feed.split('+modal=')[0]);
+            $('#search-box').val('');
+        }
+        var listItems = $('li');
+        listItems.removeClass('active');
+        for (var i = 0; i < listItems.length; i ++) {
+            if (listItems.get(i).getElementsByTagName('a')[0].innerText.toLowerCase() === feed.toLowerCase()) {
+                $(listItems.get(i)).addClass('active')
+            }
+        }
+    }
 
     function updatePanelsFromViews(){
         $.ajax({
@@ -59,12 +80,18 @@ $(document).ready(function()
         });
     }
 
+    function launchModal(link) {
+        emptyModal();
+        populateModalDesc(link);
+        populateAndToggleModal(link);
+    }
+
     function updatePanels(newsItemsXML) {
         var items = $(newsItemsXML).find('Item');
         $('#news-feed').empty();
         amountOfNewsItems = items.length;
         if (amountOfNewsItems === 0){
-            $('#news-feed').append('<h2></h2>');
+            $('#news-feed').append("<h2>No search result found for '" + $('#search-box').val() + "' :(</h2>");
         }else {
             $('#news-feed').append('<div class="panel-group">');
             for (var i = 0; i < amountOfNewsItems; i++) {
@@ -77,14 +104,14 @@ $(document).ready(function()
                 if (imageSrc !== "undefined") {
                     image = '<img class="news-image"src="' + imageSrc + '" alt="" class="img"/>';
                 }
-
                 $('#news-feed').append('<div class="col-sm-6 col-md-3 col-lg-2 ">' +
                     '<div class="panel panel-default " value="' + link + '">' +
-                    '<div class="panel-heading">' + title + '</div>' +
+                    '<div class="panel-heading"><label class="news-title">' + title + '</label></div>' +
                     image +
-                    '<div class="panel-body">' + description + '</div>' +
-                    '<div class="panel-body"><label>Views:</label><span> ' + views + '</span></div>' +
-                    '</div></div></div>');
+                    '<div class="panel-body">' +
+                    '<p>' + description + '</p>' +
+                    '<label>Views:</label><span> ' + views + '</span></div>' +
+                    '</div></div>');
             }
             $('#news-feed').append('</div');
             // Matching panel heights.
@@ -94,9 +121,8 @@ $(document).ready(function()
             // Adding event to toggle modal, count views and update the most popular section.
             $('.panel').click(function () {
                 var link = $(this).attr('value');
-                emptyModal();
-                populateModalDesc(link);
-                populateAndToggleModal(link);
+                history.pushState(null, null, "news_site.html?" + location.hash + "+modal=" + link);
+                launchModal(link);
             });
         }
     }
@@ -176,9 +202,25 @@ $(document).ready(function()
     // Adding search functionality to trigger on input change in the search bar.
     $('#search-box').bind('input', function() {
         // Showing the search section.
+        history.pushState(null, null, "news_site.html?#search=" + $(this).val());
         $('.nav.navbar-nav li').removeClass('active');
         updatePanelsFromSearch($(this).val());
-
     });
 
+    // handeling history
+    $(window).on('popstate', function (){
+        populateFromUrl();
+    })
+    function populateFromUrl() {
+        var pageRef = location.hash.split('#').pop();
+        if (pageRef.split('+modal=')[0] === '') {
+            pageRef = 'home';
+        }
+        updateFeed(pageRef);
+        if (pageRef.indexOf('+modal=') !== -1) {
+            launchModal(pageRef.split('+modal=')[1]);
+        } else {
+            $('#modal').modal('hide');
+        }
+    }
 });
