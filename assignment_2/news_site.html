@@ -9,17 +9,22 @@
     <link rel="stylesheet" type="text/css" href="styles/bootstrap/bootstrap-theme.min.css">
     <link rel="stylesheet" type="text/css" href="styles/css/myStyle.css">
 </head>
+    <!--
+        The body contains three main components. The navigation bar the news feed section and the modal. The modal and news
+        feed section are populated dynamically from a mysql database using AJAX, JQuery and PHP
+    -->
 <body>
-    <!-- Menu -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top"> <!-- nav bar fixed to top of the screen here -->
         <div>
             <div class="navbar-header">
+                <!-- Toggles collapsible div below -->
                 <button id="navbar-toggle-button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu">
                     <span class="glyphicon glyphicon-menu-hamburger"></span>
                 </button>
                 <label class="navbar-brand" id="navbar-brand">News</label>
             </div>
-            <div class="collapse navbar-collapse" id="menu">
+            <div class="collapse navbar-collapse" id="menu"> <!-- This div becomes collapsible on mobile size screens -->
                 <ul class="nav navbar-nav">
                     <li class="active"><a>Home</a></li>
                     <li><a>World</a></li>
@@ -32,13 +37,16 @@
                 <form class="navbar-form navbar-right">
                     <div class="form-group">
                         <span class="glyphicon glyphicon-search"></span>
+                        <!-- Tooltip has been added to this search field. -->
                         <input id="search-box" type="text" class="form-control" placeholder="Search" data-toggle="tooltip" data-placement="left" data-original-title="Search Helper - Type your search in here and it will run automatically.">
                     </div>
                 </form>
             </div>
         </div>
     </nav>
-    <!-- Modal -->
+    <!--
+        Modal: Empty and hidden to begin with but is populated and diaplayed when an article is clicked on.
+    -->
     <div class="container">
         <div class="modal" id="modal">
             <div class="modal-dialog modal-lg">
@@ -61,11 +69,14 @@
         </div>
     </div>
 
-    <!-- Section Containers -->
+    <!--
+        Section Containers: This section is populated dynamically in myUpdateUserInterfaceScript.js.
+    -->
     <section id='news-feed'></section>
 
-    <!-- Loading scripts files -->
+    <!-- Loading scripts files here to improve performance -->
     <script type="text/javascript" src="scripts/bootstrap/jquery-3.1.1.min.js"></script>
+    <!-- This script is executed asap as it can cause big delays. For this reason it also runs before the document is ready -->
     <script type="text/javascript" src="scripts/myUpdateDatabaseScript.js"></script>
     <script type="text/javascript" src="scripts/bootstrap/tether.min.js"></script>
     <script type="text/javascript" src="scripts/bootstrap/bootstrap.min.js"></script>

@@ -1,8 +1,11 @@
 <?php
+    // Connecting to database.
     require_once('db-connector.php');
 
+    // Getting a news item from a link.
     $sql_result = mysqli_query($conn, 'call sp3_getNewsByLink(\'' . $_GET['link'] .'\')');
 
+    // Creating an XML string from this query result.
     $xml_result_string = '<News>';
     $row = mysqli_fetch_assoc($sql_result);
     $xml_result_string .= '<Item>';
@@ -15,6 +18,10 @@
     $xml_result_string .= '<Views>' . $row['Views'] . '</Views>';
     $xml_result_string .= '</Item>';
     $xml_result_string .= '</News>';
+
+    // Returning the XML string.
     echo ($xml_result_string);
+
+    // Ending database connection.
     mysqli_close($conn);
 ?>

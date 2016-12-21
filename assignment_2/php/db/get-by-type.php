@@ -1,8 +1,11 @@
 <?php
+    // Connecting to database.
     require_once('db-connector.php');
 
+    // Getting news items from a certain channel.
     $sql_result = mysqli_query($conn, 'call sp2_getNewsByType(\'' . $_GET['feedName'] .'\')');
 
+    // Creating an XML string from this query result.
     $xml_result_string = '<News>';
     while($row = mysqli_fetch_assoc($sql_result)) {
         $xml_result_string .= '<Item>';
@@ -16,6 +19,10 @@
         $xml_result_string .= '</Item>';
     }
     $xml_result_string .= '</News>';
+
+    // Returning the XML string.
     echo ($xml_result_string);
+
+    // Ending database connection.
     mysqli_close($conn);
 ?>

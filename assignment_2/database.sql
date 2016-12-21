@@ -24,9 +24,11 @@ CREATE PROCEDURE sp1_insert(
   IN inputChannel text,
   IN inputPublishDate varchar(20))
 BEGIN
+  -- Only insert if the news item doesn't already exist.
   if ((SELECT count(*) FROM News_Items WHERE News_Items.Link = inputLink) = 0) THEN
     INSERT INTO News_Items(Link, Title, Image_Source, Description, Channels, Publish_Date, Views)
     (SELECT inputLink, inputTitle, inputImageSource, inputDescription, inputChannel, STR_TO_DATE(inputPublishDate, '%d-%m-%Y %H:%i:%s'), 0);
+  -- If the news item exists update its channels if it does not currently contain the channel if this insert.
   ELSEIF ((SELECT count(*) FROM News_Items WHERE News_Items.Channels like CONCAT("%", inputChannel, "%") AND News_Items.Link = inputLink) = 0) THEN
     UPDATE News_Items SET News_Items.Channels = CONCAT(News_Items.Channels, " | ", inputChannel) WHERE News_Items.Link = inputLink;
   END if;

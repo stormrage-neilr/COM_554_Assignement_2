@@ -2,8 +2,10 @@
  * Created by neilrafferty on 18/12/2016.
  *
  * This script updates the MySql database with new news feeds using AJAX and PHP.
+ * It runs before the document is ready to improve performance.
  */
-//The parameter gets passed into the php file to form the rss feed url.
+
+//A parameter gets passed into the php file to form the rss feed url.
 function updateDatabaseFromBBCFeed(feedName){
     $.ajax({
         type: "GET",
@@ -39,6 +41,7 @@ function saveToDatabase(feedItem, channelTitle){
     });
 }
 
+// This function parses the date from the rss feed into a date that MySql can parse.
 function getFormatedDateString(tokens) {
     var tokens = tokens.split(' ');
     return tokens[1]+'-'+(new Date(Date.parse(tokens[2] +" 1, 2000")).getMonth()+1)+'-'+tokens[3]+' '+tokens[4];
@@ -53,8 +56,8 @@ function updateDatabase(feed){
 }
 
 /*
-    Updating the database regularly with all bbc rss feeds. Note, the rss feeds are being called before the document
-    is ready to improve performance.
+    Updating the database regularly with all bbc rss feeds. Note, script should not be run client side as it will cause
+    many unnecessary updates when multiple users use the site.
  */
 setInterval(function(){
     updateDatabaseFromBBCFeed('');
