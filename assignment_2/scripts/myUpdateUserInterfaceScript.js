@@ -136,7 +136,7 @@ $(document).ready(function()
         }else {
             // If results are from a search display the search string.
             if ($('#search-box').val().length > 0){
-                $('#news-feed').append("<h2>Search result found for '" + $('#search-box').val() + "'.</h2>");
+                $('#news-feed').append("<h2>Search results for '" + $('#search-box').val() + "'.</h2>");
             }
             // Creating a group of panels based on the information from the news items.
             $('#news-feed').append('<div class="panel-group">');
