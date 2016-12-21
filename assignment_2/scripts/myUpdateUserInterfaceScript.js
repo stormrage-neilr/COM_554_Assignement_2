@@ -18,7 +18,8 @@ $(document).ready(function()
     });
 
     function updateFeed(feed){
-        if (feed.toLowerCase() === 'most popular'){
+        window.scrollTo(0, 0);
+        if (feed.toLowerCase().indexOf('most popular') === 0){
             updatePanelsFromViews();
             $('#search-box').val('');
         }else if (feed.indexOf('search') === 0){
@@ -93,6 +94,9 @@ $(document).ready(function()
         if (amountOfNewsItems === 0){
             $('#news-feed').append("<h2>No search result found for '" + $('#search-box').val() + "' :(</h2>");
         }else {
+            if ($('#search-box').val().length > 0){
+                $('#news-feed').append("<h2>Search result found for '" + $('#search-box').val() + "'.</h2>");
+            }
             $('#news-feed').append('<div class="panel-group">');
             for (var i = 0; i < amountOfNewsItems; i++) {
                 var title = items[i].getElementsByTagName('Title')[0].innerHTML;
@@ -104,7 +108,7 @@ $(document).ready(function()
                 if (imageSrc !== "undefined") {
                     image = '<img class="news-image"src="' + imageSrc + '" alt="" class="img"/>';
                 }
-                $('#news-feed').append('<div class="col-sm-6 col-md-3 col-lg-2 ">' +
+                $('#news-feed').append('<div class="col-sm-6 col-lg-3">' +
                     '<div class="panel panel-default " value="' + link + '">' +
                     '<div class="panel-heading"><label class="news-title">' + title + '</label></div>' +
                     image +
