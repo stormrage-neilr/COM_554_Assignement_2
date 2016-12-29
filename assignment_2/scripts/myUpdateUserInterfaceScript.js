@@ -34,7 +34,7 @@ $(document).ready(function()
     // Feeding news items that match the search text into the panels.
     function updatePanelsFromSearch(search){
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "php/db/get-by-search.php",
             data: {search: search},
             cache: false,
@@ -49,7 +49,7 @@ $(document).ready(function()
     // Feeding news items that match the channel name into the panels.
     function updatePanelsForFeed(feedName){
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "php/db/get-by-type.php",
             data: {feedName: feedName},
             cache: false,
@@ -64,7 +64,7 @@ $(document).ready(function()
     // Using the link to populate the modal description in more detail than provided by the bbc rss feeds.
     function populateModalDesc(link) {
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "php/get_news_item_article.php",
             data: {link: link},
             cache: false,
@@ -79,7 +79,7 @@ $(document).ready(function()
     // This method populates the modal with data from the selected news article.
     function populateAndToggleModal(link) {
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "php/db/get-by-link.php",
             data: {link: link},
             cache: false,

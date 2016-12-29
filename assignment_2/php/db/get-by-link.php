@@ -3,7 +3,7 @@
     require_once('db-connector.php');
 
     // Getting a news item from a link.
-    $sql_result = mysqli_query($conn, 'call sp3_getNewsByLink(\'' . $_GET['link'] .'\')');
+    $sql_result = mysqli_query($conn, 'call sp3_getNewsByLink(\'' . $_POST['link'] .'\')');
 
     // Creating an XML string from this query result.
     $xml_result_string = '<News>';

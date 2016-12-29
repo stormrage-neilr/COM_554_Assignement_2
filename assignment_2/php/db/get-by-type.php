@@ -3,7 +3,7 @@
     require_once('db-connector.php');
 
     // Getting news items from a certain channel.
-    $sql_result = mysqli_query($conn, 'call sp2_getNewsByType(\'' . $_GET['feedName'] .'\')');
+    $sql_result = mysqli_query($conn, 'call sp2_getNewsByType(\'' . $_POST['feedName'] .'\')');
 
     // Creating an XML string from this query result.
     $xml_result_string = '<News>';

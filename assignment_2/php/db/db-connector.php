@@ -1,6 +1,6 @@
 <?php
     /*
-        This file provids a connection to the mysql database. Note: a user should have
+        This file provides a connection to the mysql database. Note: a user should have
         been made with only access to the stored procedures used but I did not have the
         correct level of permissions to do this.
      */

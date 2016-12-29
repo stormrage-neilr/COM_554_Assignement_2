@@ -3,7 +3,7 @@
     require_once('db-connector.php');
 
     // Getting news item from a search query.
-    $sql_result = mysqli_query($conn, 'call sp5_getNewsBySearch(\'' . $_GET['search'] .'\')');
+    $sql_result = mysqli_query($conn, 'call sp5_getNewsBySearch(\'' . $_POST['search'] .'\')');
 
     // Creating an XML string from this query result.
     $xml_result_string = '<News>';

@@ -8,7 +8,7 @@
 //A parameter gets passed into the php file to form the rss feed url.
 function updateDatabaseFromBBCFeed(feedName){
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: "php/rss_bbc_feed.php",
         data: {feedName: feedName},
         dataType: "xml",

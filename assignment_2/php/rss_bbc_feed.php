@@ -14,7 +14,7 @@
         curl_close($crl);
         return $ret;
     }
-    $url = "http://feeds.bbci.co.uk/news/" . $_GET['feedName'] . "rss.xml";
+    $url = "http://feeds.bbci.co.uk/news/" . $_POST['feedName'] . "rss.xml";
     $str = file_get_contents($url);
     echo $str;
 ?>
